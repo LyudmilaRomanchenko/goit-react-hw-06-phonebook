@@ -1,6 +1,8 @@
+import { connect, useSelector, useDispatch } from "react-redux";
+import PropTypes from "prop-types";
 import ContactElement from "../ContactElement";
 import s from "./ContactList.module.css";
-import PropTypes from "prop-types";
+import actions from "../../redux/actions";
 
 function ContactList({ contacts, deleteContact }) {
   console.log(contacts);
@@ -20,6 +22,26 @@ function ContactList({ contacts, deleteContact }) {
   );
 }
 
+function getVisibleContacts(contacts, filter) {
+  const normalizedFilter = filter.toLocaleLowerCase();
+  return contacts.filter((contact) =>
+    contact.name.toLocaleLowerCase().includes(normalizedFilter)
+  );
+}
+
+const mapStateToProps = ({ contacts: { items, filter } }) => {
+  console.log(filter);
+  return {
+    contacts: getVisibleContacts(items, filter),
+  };
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  deleteContact: (id) => dispatch(actions.deleteContact(id)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactList);
+
 ContactList.prototype = {
   id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
@@ -29,5 +51,3 @@ ContactList.prototype = {
 };
 
 PropTypes.checkPropTypes(ContactList);
-
-export default ContactList;

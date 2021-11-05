@@ -1,16 +1,18 @@
 import { useState } from "react";
+import { connect, useSelector, useDispatch } from "react-redux";
 import s from "./ContactForm.module.css";
 import PropTypes from "prop-types";
+import actions from "../../redux/actions";
 
 function ContactForm({ addContact, contacts }) {
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
 
-  console.log(contacts);
+  // console.log(contacts);
 
   const handleChange = (e) => {
-    console.log(e.currentTarget.name);
-    console.log(e.currentTarget.value);
+    // console.log(e.currentTarget.name);
+    // console.log(e.currentTarget.value);
 
     if (e.currentTarget.name === "name") {
       setName(e.currentTarget.value);
@@ -20,30 +22,25 @@ function ContactForm({ addContact, contacts }) {
       setNumber(e.currentTarget.value);
     }
   };
-  console.log(name);
-  console.log(number);
-  console.log(contacts.find);
+  // console.log(name);
+  // console.log(number);
+  // console.log(contacts.find);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(contacts);
+    // console.log(contacts);
 
     const isContactsIncludes = contacts.find(
-      (contact) => console.log(contact.name)
-      // (contact) => contact.name === name
+      (contact) => contact.name === name
     );
-
-    console.log(isContactsIncludes);
+    // console.log(isContactsIncludes);
 
     if (isContactsIncludes) {
-      return alert(`${name}is alredy in contacts`);
+      return alert(`${name} is alredy in contacts`);
     } else {
       addContact(name, number);
-
       setName("");
       setNumber("");
-
-      // this.setState({ name: "", number: "" });
     }
   };
 
@@ -84,7 +81,15 @@ function ContactForm({ addContact, contacts }) {
   );
 }
 
-export default ContactForm;
+const mapStateToProps = (state) => ({
+  contacts: state.contacts.items,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  addContact: (name, number) => dispatch(actions.addContact(name, number)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactForm);
 
 ContactForm.prototype = {
   contacts: PropTypes.arrayOf(
@@ -96,18 +101,3 @@ ContactForm.prototype = {
   ),
   addContact: PropTypes.func.isRequired,
 };
-
-// ContactForm.prototype = {
-//   contacts: PropTypes.arrayOf(
-//     PropTypes.checkPropTypes(
-//       PropTypes.shape({
-//         id: PropTypes.string.isRequired,
-//         name: PropTypes.string.isRequired,
-//         number: PropTypes.number.isRequired,
-//       }).isRequired
-//     )
-//   ),
-//   addContact: PropTypes.func.isRequired,
-// };
-
-// PropTypes.checkPropTypes(ContactForm);
